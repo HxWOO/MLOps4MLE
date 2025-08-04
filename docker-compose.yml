@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  postgres-server:
+    image: postgres:14.0
+    container_name: postgres-server
+    environment:
+      POSTGRES_USER: hyun
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: mydatabase
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "hyun", "-d", "mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  data_generator:
+    build:
+      context: . # data_generator의 Dockerfile 위치
+    container_name: data-generator
+    environment:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: hyun
+      DB_PASSWORD: 1234
+      DB_NAME: mydatabase
+    depends_on:
+      postgres-server:
+        condition: service_healthy
+
+    command: ["postgres-server"]
+  
+networks:
+  default:
+    name: mlops-network
