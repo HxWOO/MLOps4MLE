@@ -1,0 +1,8 @@
+pandas
+psycopg2-binary
+scikit-learn
+python-dotenv
+joblib
+mlflow
+boto3
+fastapi[all]
